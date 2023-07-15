@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -18,7 +18,7 @@ class UserModel(BaseModel):
     name: str
     email: str
     password: str
-    items: list[Item] = []
+    items: List[Item] = []
 
     class Config:
         orm_mode = True
