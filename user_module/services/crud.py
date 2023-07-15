@@ -16,12 +16,20 @@ def get_all(db: Session = Depends(get_db)):
 
 
 def get_by_id(user_id: int, db: Session = Depends(get_db)):
-    data = db.query(model.User).all()
-    for user in data:
-        if user.id == user_id:
-            return user
-    else:
-        raise UnicornException("user not found!")
+    data = db.query(model.User).filter_by(id=user_id).first()
+    user_dto = data_model.UserModel(
+        name=data.name,
+        email=data.email,
+        password="***",
+        items=[]
+    )
+    item_dto = data_model.Item(
+        title=data.items.__getitem__(0).title,
+        description=data.items.__getitem__(0).description,
+        owner_id = data.items.__getitem__(0).owner_id
+    )
+    user_dto.items = [item_dto]
+    return user_dto
 
 
 def delete_by_id(user_id: int, db: Session = Depends(get_db)):
@@ -31,9 +39,13 @@ def delete_by_id(user_id: int, db: Session = Depends(get_db)):
     return f"user with id {user_id} removed successfully"
 
 
+
+
 def create_user(user: data_model.UserModel, db: Session = Depends(get_db)):
     try:
         db_user = model.User(name=user.name, email=user.email, password=user.password)
+        db_item = model.Item(title=user.items.__getitem__(0).title, description=user.items.__getitem__(0).description)
+        db_user.items = [db_item]
         db.add(db_user)
         db.commit()
         db.refresh(db_user)

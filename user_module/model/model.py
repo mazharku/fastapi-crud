@@ -11,7 +11,7 @@ class User(Base):
     email = Column(String)
     password = Column(String)
 
-    items = relationship("Item", back_populates="owner")
+    items = relationship("Item", back_populates="owner", cascade="all, delete-orphan")
 
 
 class Item(Base):
