@@ -11,6 +11,11 @@ router = APIRouter(
 )
 
 
+@router.get("/name")
+def return_name():
+    return {"name": "John Doe"}
+
+
 @router.get("")
 async def fetch_all(db: Session = Depends(get_db)):
     return service.get_all(db)
